@@ -2,15 +2,24 @@ import network
 import socket
 import time
 import rp2
+from machine import Pin
 
-SSID = "JOKER001"  # 修改为你的WiFi名称
-PASSWORD = "Jn901001$$"  # 修改为你WiFi密码
-port = 10000  # 端口号
+led = Pin(25, Pin.OUT)
+
 listenSocket = None  # 套接字
 rp2.country('CN')
 ap = network.WLAN(network.AP_IF)
 ap.config(essid="JOKER", password="Jn901001$$")
-ap.active(True)
+print("prepare start ap")
+while True:
+    try:
+        ap.active(True)
+        break
+    except Exception as e:
+        print(e)
+        ap.active(False)
+        time.sleep(2)
+
 while ap.active() == False:
     time.sleep(2)
 
@@ -25,15 +34,19 @@ def socket_server():
     while 1:
         conn, addr = s.accept()  # 接受TCP连接，并返回新的套接字与IP地址
         print('Connected by', addr)  # 输出客户端的IP地址
-        conn.send("Connected success\n")
+        conn.send("Connected success\r")
         while 1:
-            data = conn.recv(1024) # 把接收的数据实例化
-            print(data)
+            data = conn.recv(1024)  # 把接收的数据实例化
+            data = data.decode('utf-8')
             print(data.strip())
-            print("prepare send")
-            conn.send("has recv data: "+data.decode('utf-8')+"\n")
-            print("send over")
-            if b"exit" == data:
+            conn.send("has recv data: " + data + "\r")
+            if "on" == data:
+                print("now led is on")
+                led.value(0)
+            if "off" == data:
+                print("now led is off")
+                led.value(0)
+            if "exit" == data:
                 break
     conn.close()  # 关闭连接
 
@@ -41,7 +54,7 @@ def socket_server():
 if __name__ == "__main__":
     try:
         socket_server()
-    except Exception as e:
+    except Exception and KeyboardInterrupt as e:
         print(e)
     finally:
         ap.disconnect()  # 断开WiFi
