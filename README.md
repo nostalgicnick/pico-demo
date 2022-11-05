@@ -5,4 +5,5 @@
 ### 欢迎指正
 ### wifi模块使用的是picow，自带无线网模块，不需要esp01
 在pico上开启socket服务，电脑或者手机，可以连接pico，进行socket通信
-联系方式QQ：4933149
+picow的载板LED没有绑定任何GPIO,使用"LED"这个字符串代替
+### 联系方式QQ：4933149
