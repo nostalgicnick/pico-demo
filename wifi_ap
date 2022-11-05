@@ -4,7 +4,7 @@ import time
 import rp2
 from machine import Pin
 
-led = Pin(25, Pin.OUT)
+led = Pin("LED", Pin.OUT)
 
 listenSocket = None  # 套接字
 rp2.country('CN')
@@ -42,7 +42,7 @@ def socket_server():
             conn.send("has recv data: " + data + "\r")
             if "on" == data:
                 print("now led is on")
-                led.value(0)
+                led.value(1)
             if "off" == data:
                 print("now led is off")
                 led.value(0)
@@ -59,4 +59,3 @@ if __name__ == "__main__":
     finally:
         ap.disconnect()  # 断开WiFi
         ap.active(False)  # 冻结网络
-
