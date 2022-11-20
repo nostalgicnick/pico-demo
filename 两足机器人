@@ -1,0 +1,90 @@
+from machine import Pin, PWM
+import time
+
+
+def calc_roll_number(arc: int):
+    arc_number = int((0.5 + arc / 90) * 65535 / 20)
+    return arc_number
+
+
+foot_left_pin = Pin(0, Pin.OUT)
+leg_lef_pin = Pin(1, Pin.OUT)
+foot_right_pin = Pin(2, Pin.OUT)
+leg_right_pin = Pin(3, Pin.OUT)
+
+foot_left_pwm = PWM(foot_left_pin)
+leg_lef_pwm = PWM(leg_lef_pin)
+foot_right_pwm = PWM(foot_right_pin)
+leg_right_pwm = PWM(leg_right_pin)
+
+foot_left_pwm.freq(50)
+leg_lef_pwm.freq(50)
+foot_right_pwm.freq(50)
+leg_right_pwm.freq(50)
+
+foot_left_pwm.duty_u16(calc_roll_number(90))
+leg_lef_pwm.duty_u16(calc_roll_number(90))
+foot_right_pwm.duty_u16(calc_roll_number(90))
+leg_right_pwm.duty_u16(calc_roll_number(90))
+time.sleep(1)
+foot_left_pwm.deinit()
+leg_lef_pwm.deinit()
+foot_right_pwm.deinit()
+leg_right_pwm.deinit()
+time.sleep(5)
+
+
+def walk():
+    ##第一个半步
+    foot_left_pwm.duty_u16(calc_roll_number(160))
+    foot_right_pwm.duty_u16(calc_roll_number(120))
+    time.sleep(1.5)
+    foot_left_pwm.duty_u16(calc_roll_number(120))
+    time.sleep(0.5)
+    foot_left_pwm.deinit()
+    foot_right_pwm.deinit()
+
+    leg_right_pwm.duty_u16(calc_roll_number(65))
+    time.sleep(1)
+    leg_right_pwm.deinit()
+
+    foot_left_pwm.duty_u16(calc_roll_number(90))
+    foot_right_pwm.duty_u16(calc_roll_number(90))
+    leg_right_pwm.duty_u16(calc_roll_number(90))
+    time.sleep(1)
+    foot_left_pwm.deinit()
+    foot_right_pwm.deinit()
+    leg_right_pwm.deinit()
+
+    leg_lef_pwm.duty_u16(calc_roll_number(60))
+    time.sleep(1)
+    leg_lef_pwm.deinit()
+
+    ##下一个半步
+
+    foot_right_pwm.duty_u16(calc_roll_number(20))
+    foot_left_pwm.duty_u16(calc_roll_number(60))
+    time.sleep(1.5)
+    foot_right_pwm.duty_u16(calc_roll_number(60))
+    time.sleep(0.5)
+    foot_left_pwm.deinit()
+    foot_right_pwm.deinit()
+
+    leg_lef_pwm.duty_u16(calc_roll_number(115))
+    time.sleep(1)
+    leg_lef_pwm.deinit()
+
+    foot_left_pwm.duty_u16(calc_roll_number(90))
+    foot_right_pwm.duty_u16(calc_roll_number(90))
+    time.sleep(1)
+    foot_left_pwm.deinit()
+    foot_right_pwm.deinit()
+
+    leg_lef_pwm.duty_u16(calc_roll_number(90))
+    time.sleep(1)
+    leg_lef_pwm.deinit()
+
+
+if __name__ == "__main__":
+    for i in range(5):
+        walk()
